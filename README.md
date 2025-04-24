@@ -5,7 +5,7 @@ API REST para la gestión de máquinas virtuales desarrollada con FastAPI.
 ## 🚀 Características
 
 - Autenticación JWT
-- Gestión de usuarios y roles
+- Gestión de usuarios y roles (ADMIN y CLIENT)
 - Operaciones CRUD para máquinas virtuales
 - Base de datos PostgreSQL
 - Documentación automática de la API
@@ -55,6 +55,32 @@ uvicorn app.main:app --reload
 ```
 
 La aplicación estará disponible en `http://localhost:8000`
+
+## 👥 Creación de Usuarios
+
+La API soporta dos tipos de roles: ADMIN y CLIENT. Para crear usuarios, puedes usar el endpoint de creación con los siguientes ejemplos:
+
+### Usuario Administrador
+```json
+{
+    "email": "admin@example.com",
+    "username": "admin",
+    "password": "admin123",
+    "is_superuser": true,
+    "role": "ADMIN"
+}
+```
+
+### Usuario Cliente
+```json
+{
+    "email": "user1@example.com",
+    "username": "user1",
+    "password": "user123",
+    "is_superuser": false,
+    "role": "CLIENT"
+}
+```
 
 ## 📚 Documentación de la API
 
@@ -106,7 +132,6 @@ La API utiliza JWT para autenticación. Para acceder a los endpoints protegidos:
 3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abrir un Pull Request
-
 
 ## 📞 Contacto
 
