@@ -5,6 +5,7 @@ cffi==1.17.1
 click==8.1.8
 cryptography==44.0.2
 ecdsa==0.19.1
+email-validator==2.1.0.post1
 fastapi==0.115.12
 greenlet==3.2.1
 h11==0.14.0
@@ -15,6 +16,7 @@ pyasn1==0.4.8
 pycparser==2.22
 pydantic==2.11.3
 pydantic_core==2.33.1
+pydantic[email]
 python-dotenv==1.1.0
 python-jose==3.4.0
 python-multipart==0.0.20
