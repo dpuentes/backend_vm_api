@@ -9,6 +9,7 @@ from . import crud, models, schemas
 from .database import get_db
 import os
 from dotenv import load_dotenv
+import logging
 
 # Cargar variables de entorno
 load_dotenv()
@@ -56,15 +57,26 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        email: str = payload.get("sub")
+        role: str = payload.get("role")
+
+        # Log para depuración
+        logger.info(f"Token decodificado - Email: {email}, Rol: {role}")
+
+        if email is None or role is None:
+            logger.error("Token no contiene email o rol")
             raise credentials_exception
-        token_data = schemas.TokenData(username=username)
-    except JWTError:
+
+        token_data = schemas.TokenData(email=email, role=role)
+    except JWTError as e:
+        logger.error(f"Error decodificando token: {str(e)}")
         raise credentials_exception
-    user = crud.get_user_by_username(db, username=token_data.username)
+
+    user = crud.get_user_by_email(db, email=token_data.email)
     if user is None:
+        logger.error(f"Usuario no encontrado: {token_data.email}")
         raise credentials_exception
+
     return user
 
 async def get_current_active_user(current_user: models.User = Depends(get_current_user)) -> models.User:

@@ -19,6 +19,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    role: Role = Role.CLIENT
 
 class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
@@ -41,7 +42,8 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    username: Optional[str] = None
+    email: Optional[str] = None
+    role: Optional[str] = None
 
 # VM schemas
 class VMBase(BaseModel):
