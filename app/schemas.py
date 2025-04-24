@@ -76,27 +76,24 @@ class VM(VMBase):
 # Virtual Machine schemas
 class VirtualMachineBase(BaseModel):
     name: str
-    description: Optional[str] = None
-    memory: int
-    cpu_cores: int
-    disk_size: int
+    cores: int = Field(..., gt=0)
+    ram: int = Field(..., gt=0)  # en GB
+    disk: int = Field(..., gt=0)  # en GB
+    os: str
+    status: str
 
 class VirtualMachineCreate(VirtualMachineBase):
     pass
 
 class VirtualMachineUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
+    cores: Optional[int] = Field(None, gt=0)
+    ram: Optional[int] = Field(None, gt=0)
+    disk: Optional[int] = Field(None, gt=0)
+    os: Optional[str] = None
     status: Optional[str] = None
-    ip_address: Optional[str] = None
-    memory: Optional[int] = None
-    cpu_cores: Optional[int] = None
-    disk_size: Optional[int] = None
 
 class VirtualMachineInDB(VirtualMachineBase):
     id: int
-    status: str
-    ip_address: Optional[str] = None
     owner_id: int
     created_at: datetime
     updated_at: Optional[datetime] = None

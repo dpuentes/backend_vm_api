@@ -25,12 +25,11 @@ class VirtualMachine(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    description = Column(Text, nullable=True)
-    status = Column(String, default="stopped")  # stopped, running, paused
-    ip_address = Column(String, nullable=True)
-    memory = Column(Integer)  # en MB
-    cpu_cores = Column(Integer)
-    disk_size = Column(Integer)  # en GB
+    cores = Column(Integer)
+    ram = Column(Integer)  # en GB
+    disk = Column(Integer)  # en GB
+    os = Column(String)
+    status = Column(String, default="stopped")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

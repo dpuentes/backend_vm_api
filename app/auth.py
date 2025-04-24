@@ -11,6 +11,10 @@ import os
 from dotenv import load_dotenv
 import logging
 
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Cargar variables de entorno
 load_dotenv()
 

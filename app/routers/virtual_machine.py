@@ -13,6 +13,13 @@ def create_virtual_machine(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_active_user)
 ):
+    # Verificar que el usuario sea administrador
+    if not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Solo los administradores pueden crear máquinas virtuales"
+        )
+
     return crud.create_virtual_machine(db=db, vm=virtual_machine, user_id=current_user.id)
 
 @router.get("/", response_model=List[schemas.VirtualMachineInDB])
@@ -28,42 +35,60 @@ def read_virtual_machines(
         virtual_machines = crud.get_user_virtual_machines(db, current_user.id, skip=skip, limit=limit)
     return virtual_machines
 
-@router.get("/{virtual_machine_id}", response_model=schemas.VirtualMachineInDB)
+@router.get("/{vm_id}", response_model=schemas.VirtualMachineInDB)
 def read_virtual_machine(
-    virtual_machine_id: int,
+    vm_id: int,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_active_user)
 ):
-    db_virtual_machine = crud.get_virtual_machine(db, vm_id=virtual_machine_id)
-    if db_virtual_machine is None:
-        raise HTTPException(status_code=404, detail="Virtual machine not found")
-    if not current_user.is_superuser and db_virtual_machine.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    return db_virtual_machine
+    db_vm = crud.get_virtual_machine(db, vm_id=vm_id)
+    if db_vm is None:
+        raise HTTPException(status_code=404, detail="Máquina virtual no encontrada")
 
-@router.put("/{virtual_machine_id}", response_model=schemas.VirtualMachineInDB)
+    # Verificar permisos
+    if not current_user.is_superuser and db_vm.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tiene permisos para acceder a esta máquina virtual"
+        )
+
+    return db_vm
+
+@router.put("/{vm_id}", response_model=schemas.VirtualMachineInDB)
 def update_virtual_machine(
-    virtual_machine_id: int,
+    vm_id: int,
     virtual_machine: schemas.VirtualMachineUpdate,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_active_user)
 ):
-    db_virtual_machine = crud.get_virtual_machine(db, vm_id=virtual_machine_id)
-    if db_virtual_machine is None:
-        raise HTTPException(status_code=404, detail="Virtual machine not found")
-    if not current_user.is_superuser and db_virtual_machine.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    return crud.update_virtual_machine(db=db, vm_id=virtual_machine_id, vm=virtual_machine)
+    # Verificar que el usuario sea administrador
+    if not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Solo los administradores pueden actualizar máquinas virtuales"
+        )
 
-@router.delete("/{virtual_machine_id}", response_model=schemas.VirtualMachineInDB)
+    db_vm = crud.get_virtual_machine(db, vm_id=vm_id)
+    if db_vm is None:
+        raise HTTPException(status_code=404, detail="Máquina virtual no encontrada")
+
+    return crud.update_virtual_machine(db=db, vm_id=vm_id, vm=virtual_machine)
+
+@router.delete("/{vm_id}", response_model=schemas.VirtualMachineInDB)
 def delete_virtual_machine(
-    virtual_machine_id: int,
+    vm_id: int,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_active_user)
 ):
-    db_virtual_machine = crud.get_virtual_machine(db, vm_id=virtual_machine_id)
-    if db_virtual_machine is None:
-        raise HTTPException(status_code=404, detail="Virtual machine not found")
-    if not current_user.is_superuser and db_virtual_machine.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    return crud.delete_virtual_machine(db=db, vm_id=virtual_machine_id)
+    # Verificar que el usuario sea administrador
+    if not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Solo los administradores pueden eliminar máquinas virtuales"
+        )
+
+    db_vm = crud.get_virtual_machine(db, vm_id=vm_id)
+    if db_vm is None:
+        raise HTTPException(status_code=404, detail="Máquina virtual no encontrada")
+
+    return crud.delete_virtual_machine(db=db, vm_id=vm_id)

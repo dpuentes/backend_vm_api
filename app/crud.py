@@ -40,25 +40,33 @@ def get_user_virtual_machines(db: Session, user_id: int, skip: int = 0, limit: i
         models.VirtualMachine.owner_id == user_id
     ).offset(skip).limit(limit).all()
 
-def create_virtual_machine(db: Session, virtual_machine: schemas.VirtualMachineCreate, user_id: int):
-    db_virtual_machine = models.VirtualMachine(**virtual_machine.dict(), owner_id=user_id)
-    db.add(db_virtual_machine)
+def create_virtual_machine(db: Session, vm: schemas.VirtualMachineCreate, user_id: int):
+    db_vm = models.VirtualMachine(
+        name=vm.name,
+        cores=vm.cores,
+        ram=vm.ram,
+        disk=vm.disk,
+        os=vm.os,
+        status=vm.status,
+        owner_id=user_id
+    )
+    db.add(db_vm)
     db.commit()
-    db.refresh(db_virtual_machine)
-    return db_virtual_machine
+    db.refresh(db_vm)
+    return db_vm
 
-def update_virtual_machine(db: Session, virtual_machine_id: int, virtual_machine: schemas.VirtualMachineUpdate):
-    db_virtual_machine = get_virtual_machine(db, virtual_machine_id)
-    if not db_virtual_machine:
+def update_virtual_machine(db: Session, vm_id: int, vm: schemas.VirtualMachineUpdate):
+    db_vm = get_virtual_machine(db, vm_id)
+    if not db_vm:
         return None
 
-    update_data = virtual_machine.dict(exclude_unset=True)
+    update_data = vm.dict(exclude_unset=True)
     for key, value in update_data.items():
-        setattr(db_virtual_machine, key, value)
+        setattr(db_vm, key, value)
 
     db.commit()
-    db.refresh(db_virtual_machine)
-    return db_virtual_machine
+    db.refresh(db_vm)
+    return db_vm
 
 def delete_virtual_machine(db: Session, virtual_machine_id: int):
     db_virtual_machine = get_virtual_machine(db, virtual_machine_id)
