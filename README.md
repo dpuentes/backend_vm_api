@@ -11,6 +11,8 @@ API REST para la gestión de máquinas virtuales desarrollada con FastAPI.
 - Documentación automática de la API
 - Despliegue en Render
 
+Para más detalles sobre la arquitectura del sistema, ver [Documentación de Arquitectura](./ARCHITECTURE.md)
+
 ## 📋 Prerrequisitos
 
 - Python 3.8+
