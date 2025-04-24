@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from . import models
 from .database import engine, get_db
-from .routers import users, virtual_machine
+from .routers import users, virtual_machine, auth
 
 # Crear las tablas en la base de datos
 models.Base.metadata.create_all(bind=engine)
@@ -23,6 +23,7 @@ app.add_middleware(
 )
 
 # Incluir los routers
+app.include_router(auth.router, prefix="/api/v1", tags=["auth"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(virtual_machine.router, prefix="/api/v1/virtual-machines", tags=["virtual-machines"])
 

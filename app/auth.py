@@ -30,8 +30,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
-def authenticate_user(db: Session, username: str, password: str) -> Optional[models.User]:
-    user = crud.get_user_by_username(db, username)
+def authenticate_user(db: Session, email: str, password: str) -> Optional[models.User]:
+    user = crud.get_user_by_email(db, email)
     if not user:
         return None
     if not verify_password(password, user.hashed_password):
